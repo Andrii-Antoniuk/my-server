@@ -7,7 +7,7 @@
     <title>LOL!</title>
     <script>
         let ws;
-        const proto = window.location.protocol === 'https' ? 'wss' : 'ws';
+        const proto = window.location.protocol === 'https:' ? 'wss' : 'ws';
 
         ws = new WebSocket(`${proto}://${window.location.host}`);
 
