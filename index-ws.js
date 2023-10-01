@@ -2,6 +2,8 @@ const express = require('express');
 const server = require('http').createServer();
 const app = express();
 
+let isShuttingDown = false;
+
 app.get('/', function (req, res) {
     res.sendFile('index.html', { root: __dirname });
 });
@@ -20,7 +22,14 @@ const WebSocketServer = require('ws').Server;
 const wss = new WebSocketServer({ server: server });
 
 process.on('SIGINT', function () {
-    console.log('sigint');
+    if(isShuttingDown){
+        console.log('I already received a SIGINT, please wait :(');
+        return;
+    }
+
+    isShuttingDown = true;
+
+    console.log('SIGINT received');
 
     wss.clients.forEach(function eachShutdown(client) {
         client.close();
@@ -28,7 +37,6 @@ process.on('SIGINT', function () {
 
     server.close(shutdownDb);
 });
-
 
 wss.on('connection', function connection(ws) {
     const numClients = wss.clients.size;
